@@ -12,6 +12,7 @@
   </head>
   <body>
     <h1>API Examples</h1>
+    <p>Get all of the code for this example on <a href="https://github.com/dldf/APIs">Dan's GitHub</a></p>
     <hr>
 
     <h2>JavaScript Navigator API</h2>
@@ -38,7 +39,8 @@
     <p>A random first name: <span id="randomfirstname">--</span></p>
     
     <h3>JSON Open Weather API <a href="https://openweathermap.org/">[?]</a></h3>
-    <p>A Third Party API that needs an api key to work. I made <a href="weather.php?zip=59759&country=US">weather.php</a> that uses my hidden API key to pass a query on to openweathermap.org for raw JSON that has to be interpreted -- see the JS that uses fetch() to get and parse the data.</p>
+    <p>A Third Party API that needs an api key to work. I made <a href="weather.php?zip=59759&country=US">weather.php</a> that uses my (hidden) API key to pass a query on to openweathermap.org for raw JSON that has to be interpreted -- see the JS that uses fetch() to get and parse the data.</p> 
+    <p>There are a few ways to hide API keys so they can't be accessed by anyone with an internet connection. I put mine in a directory outside of the web document root, so the internet can't see it, but my weather.php file on the server still can.</p>
     <p>Right now in <span id="city">--</span>, the temperature is <span id="temp">--</span>.</p>
 
     <script src="https://unpkg.com/htmx.org@2.0.2"></script>
