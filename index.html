@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>API Examples</title>
+
+    <!-- ADDED: Google Font + simple CSS for .coolfont -->
+    <link href="https://fonts.googleapis.com/css2?family=Lobster&display=swap" rel="stylesheet">
+    <style>
+      .coolfont { font-family: "Lobster", cursive; }
+    </style>
+  </head>
+  <body>
+    <h1>API Examples</h1>
+    <hr>
+
+    <h2>JavaScript Navigator API</h2>
+    <h3>navigator.geolocation
+      <a href="https://www.w3schools.com/js/tryit.asp?filename=tryjs_api_geo_coordinates">[?]</a>
+    </h3>
+    <p id="location">Your Location:</p>
+    <button onclick="getLocation()">Get Location</button>
+
+    <h3>navigator.onLine
+      <a href="https://developer.mozilla.org/en-US/docs/Web/API/Navigator/onLine">[?]</a>
+    </h3>
+    <p>This browser is <span id="isonline">--</span></p>
+    <hr>
+
+    <h2>Third Party APIs</h2>
+    <h3>Google Fonts API
+      <a href="https://developers.google.com/fonts/docs/getting_started">[?]</a>
+    </h3>
+    <p>A free Google API to bring <span class="coolfont">eclectic fonts</span> to your website.</p>
+
+    <h3>JSON Random User API <a href="https://randomuser.me">[?]</a></h3>
+    <p>Here is <a href="https://randomuser.me/api">Raw JSON</a> data for modeling a person (user) with lots of properties. You need to parse the JSON to make it readable for HTML, as below:</p>
+    <p>A random first name: <span id="randomfirstname">--</span></p>
+    
+    <h3>JSON Open Weather API <a href="https://openweathermap.org/">[?]</a></h3>
+    <p>A Third Party API that needs an api key to work. I made <a href="weather.php?zip=59759&country=US">weather.php</a> that uses my hidden API key to pass a query on to openweathermap.org for raw JSON that has to be interpreted -- see the JS that uses fetch() to get and parse the data.</p>
+    <p>Right now in <span id="city">--</span>, the temperature is <span id="temp">--</span>.</p>
+
+    <script src="https://unpkg.com/htmx.org@2.0.2"></script>
+    <h3>RESTful Hypermedia API <a href="https://htmx.org">[?]</a></h3>
+    <p>When a user clicks on this button, make an AJAX request to <code>hypermedia_response.html</code>, and replace the entire button with the HTML response: <button hx-post="hypermedia_response.html" hx-swap="outerHTML">Click This Button</button></p>
+
+    <script>
+      const loc = document.getElementById("location");
+      function getLocation() {
+        if (!("geolocation" in navigator)) {
+          loc.innerHTML += "<br>Geolocation not supported in this browser.";
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(showPosition, showGeoError);
+      }
+      function showPosition(position) {
+        loc.innerHTML +=
+          "<br>Latitude: " + position.coords.latitude +
+          "<br>Longitude: " + position.coords.longitude;
+      }
+      function showGeoError(err) {
+        // Common causes: blocked permission, insecure context (need HTTPS), or timeout
+        loc.innerHTML += "<br>Geolocation error: " + (err && err.message ? err.message : "Unknown error");
+      }
+
+      // ADDED: online/offline status updates
+      const onlineEl = document.getElementById("isonline");
+      function updateOnline() {
+        onlineEl.textContent = navigator.onLine ? "ONLINE" : "OFFLINE";
+      }
+      window.addEventListener("online", updateOnline);
+      window.addEventListener("offline", updateOnline);
+      updateOnline(); // initialize on load
+
+    fetch('https://randomuser.me/api')
+      .then(response => {
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response.json(); // or .text(), .blob(), etc., depending on the expected content type
+      })
+      .then(data => {
+        // Fill DOM
+        document.getElementById('randomfirstname').textContent = data.results[0].name.first ?? 'Unknown';
+      })
+
+    // Call your API endpoint (same origin: my weather.php calls openweathermap.com)
+    fetch('weather.php?zip=59718&country=US')
+      .then(response => {
+        if (!response.ok) throw new Error('HTTP ' + response.status);
+        return response.json(); 
+      })
+      .then(data => {
+        // Fill DOM
+        document.getElementById('city').textContent = data.name ?? 'Unknown';
+        document.getElementById('temp').textContent = data.main?.temp != null ? Math.round(data.main.temp) + ' °F' : 'N/A';
+      })
+      .catch(err => {
+        document.getElementById('temp').textContent = String(err);
+      });
+    </script>
+  </body>
+</html>
